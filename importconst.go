@@ -132,7 +132,7 @@ func main() {
 		return
 	}
 	if len(names) <= 0 {
-		fmt.Fprintln(os.Stderr, "Usage: %s PACKAGENAME mark(constant)...")
+		fmt.Fprintf(os.Stderr, "Usage: %s PACKAGENAME mark(constant)...\n", os.Args[0])
 		fmt.Fprintln(os.Stderr, "  -d ... do not remove temporary file")
 		fmt.Fprintln(os.Stderr, "  -c ... clean output-files")
 		fmt.Fprintln(os.Stderr, "  <header.h> \"header.h\" ... append headers")

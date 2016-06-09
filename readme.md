@@ -19,8 +19,8 @@ It requres `gcc.exe`.
        -> ./const.go
     gcc and go-fmt are required.
 
-Example
--------
+Example-1
+---------
 
 ### Commandline
 
@@ -35,7 +35,7 @@ Example
         u32x(STD_INPUT_HANDLE) ^
         u32x(STD_OUTPUT_HANDLE)
 
-### Output
+### Output (`const.go`)
 
     package conio
 
@@ -47,3 +47,34 @@ Example
     const ENABLE_PROCESSED_INPUT = 1
     const STD_INPUT_HANDLE = uint32(0xFFFFFFF6)
     const STD_OUTPUT_HANDLE = uint32(0xFFFFFFF5)
+
+Example-2
+---------
+
+### Commandline
+
+    go-importconst -d "stddef.h" "<stdlib.h>" main d(NULL)
+
+### Temporary-file (`makeconst.c`)
+
+    #include <stdio.h>
+    #include <windows.h>
+    #include <stdlib.h>
+    #include "stddef.h"
+
+    #define d(n) printf("const " #n "=%d\n",n)
+    #define s(n) printf("const " #n "=\"%s\"\n",n)
+    #define u32x(n) printf("const " #n "=uint32(0x%08X)\n",n)
+
+    int main()
+    {
+        printf("package main\n\n");
+        d(NULL);
+        return 0;
+    }
+
+### Output (`const.go`)
+
+    package main
+
+    const NULL = 0

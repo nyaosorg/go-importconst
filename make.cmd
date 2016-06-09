@@ -1,4 +1,6 @@
 @echo off
+setlocal
+set GOARCH=386
 
 if not "%1" == "" goto %1
     go fmt importconst.go
@@ -33,3 +35,5 @@ if not "%1" == "" goto %1
     go-importconst -c
     goto end
 :end
+
+endlocal

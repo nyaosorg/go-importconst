@@ -4,11 +4,41 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 const CSOURCE = "makeconst.c"
 const AEXE = "a.exe"
 const CC = "gcc.exe"
+const GOSOURCE = "const.go"
+
+var debug = false
+
+var packagename string
+var headers []string
+var stdheaders = []string{"<stdio.h>", "<windows.h>"}
+var names = []string{}
+
+func parse() bool {
+	for _, arg1 := range os.Args[1:] {
+		if arg1 == "-d" {
+			debug = true
+		} else if arg1 == "-c" {
+			os.Remove(CSOURCE)
+			os.Remove(GOSOURCE)
+			return false
+		} else if strings.HasSuffix(arg1, ".h") {
+			headers = append(headers, arg1)
+		} else if strings.HasSuffix(arg1, ".h>") {
+			stdheaders = append(stdheaders, arg1)
+		} else if packagename == "" {
+			packagename = arg1
+		} else {
+			names = append(names, arg1)
+		}
+	}
+	return true
+}
 
 func make_csource(csrcname string) {
 	fd, err := os.Create(csrcname)
@@ -18,8 +48,12 @@ func make_csource(csrcname string) {
 	}
 	defer fd.Close()
 
-	fmt.Fprintln(fd, `#include <stdio.h>`)
-	fmt.Fprintln(fd, `#include <windows.h>`)
+	for _, header1 := range stdheaders {
+		fmt.Fprintf(fd, "#include %s\n", header1)
+	}
+	for _, header1 := range headers {
+		fmt.Fprintf(fd, "#include \"%s\"\n", header1)
+	}
 	fmt.Fprintln(fd, ``)
 	fmt.Fprintln(fd, `#define d(n) printf("const " #n "=%d\n",n)`)
 	fmt.Fprintln(fd, `#define s(n) printf("const " #n "=\"%s\"\n",n)`)
@@ -27,10 +61,10 @@ func make_csource(csrcname string) {
 	fmt.Fprintln(fd, ``)
 	fmt.Fprintln(fd, `int main()`)
 	fmt.Fprintln(fd, `{`)
-	fmt.Fprintln(fd, `    printf("package `+os.Args[1]+`\n\n");`)
+	fmt.Fprintln(fd, `    printf("package `+packagename+`\n\n");`)
 
-	for _, arg1 := range os.Args[2:] {
-		fmt.Fprintf(fd, "    %s;\n", arg1)
+	for _, name1 := range names {
+		fmt.Fprintf(fd, "    %s;\n", name1)
 	}
 	fmt.Fprintln(fd, "    return 0;\n}\n")
 }
@@ -39,7 +73,7 @@ func compile() error {
 	var gcc exec.Cmd
 	gcc.Args = []string{
 		CC,
-		"makeconst.c",
+		CSOURCE,
 	}
 	gcc.Path = gcc.Args[0]
 	gcc.Stdout = os.Stdout
@@ -53,7 +87,7 @@ func aexe() error {
 		AEXE,
 	}
 	aexe.Path = aexe.Args[0]
-	const_c, err := os.Create("const.go")
+	const_c, err := os.Create(GOSOURCE)
 	if err != nil {
 		return err
 	}
@@ -68,7 +102,7 @@ func gofmt() error {
 	gofmt.Args = []string{
 		"go",
 		"fmt",
-		"const.go",
+		GOSOURCE,
 	}
 	gofmt.Path = gofmt.Args[0]
 	gofmt.Stdout = os.Stdout
@@ -85,7 +119,7 @@ func main1() error {
 	if err != nil {
 		return err
 	}
-	defer os.Remove(AEXE)
+	os.Remove(AEXE)
 	err = gofmt()
 	if err != nil {
 		return err
@@ -94,11 +128,17 @@ func main1() error {
 }
 
 func main() {
-	if len(os.Args) < 3 {
+	if !parse() {
+		return
+	}
+	if len(names) <= 0 {
 		fmt.Fprintln(os.Stderr, "Usage: %s PACKAGENAME mark(constant)...")
-		fmt.Fprintln(os.Stderr, "   d(NAME) ... const NAME=%d")
-		fmt.Fprintln(os.Stderr, "   s(NAME) ... const NAME=\"%s\"")
-		fmt.Fprintln(os.Stderr, "   u32x(NAME) ... const NAME=uint32(%08X)")
+		fmt.Fprintln(os.Stderr, "  -d ... do not remove temporary file")
+		fmt.Fprintln(os.Stderr, "  -c ... clean output-files")
+		fmt.Fprintln(os.Stderr, "  <header.h> \"header.h\" ... append headers")
+		fmt.Fprintln(os.Stderr, "  d(NAME) ... const NAME=%d")
+		fmt.Fprintln(os.Stderr, "  s(NAME) ... const NAME=\"%s\"")
+		fmt.Fprintln(os.Stderr, "  u32x(NAME) ... const NAME=uint32(%08X)")
 		fmt.Fprintln(os.Stderr, "creates these files.")
 		fmt.Fprintln(os.Stderr, "   -> ./makeconst.c (temporary)")
 		fmt.Fprintln(os.Stderr, "   -> ./a.exe (temporary)")
@@ -106,9 +146,10 @@ func main() {
 		fmt.Fprintln(os.Stderr, "gcc and go-fmt are required.")
 		return
 	}
-
 	make_csource(CSOURCE)
-	defer os.Remove(CSOURCE)
+	if !debug {
+		defer os.Remove(CSOURCE)
+	}
 
 	if err := main1(); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())

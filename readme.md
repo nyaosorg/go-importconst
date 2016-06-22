@@ -14,6 +14,7 @@ It requres `gcc.exe`.
       s(NAME) ... const NAME="%s"
       u32x(NAME) ... const NAME=uint32(%08X)
       up(NAME) ... const NAME=uintptr(%d)
+      NAME:TYPE:FORMAT ... const NAME=TYPE(FORMAT)
     creates these files.
        -> ./makeconst.c (temporary)
        -> ./a.exe (temporary)

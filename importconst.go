@@ -67,10 +67,12 @@ func make_csource(csrcname string) {
 	fmt.Fprintln(fd, `#define up(n) printf("const " #n "=uintptr(%d)\n",n)`)
 	for key, val := range macros {
 		fmt.Fprintf(fd, `#define MAKECONST_%s(n) printf("const " #n "=`, key)
+
+		format := strings.Replace(val[1], `"`, `\"`, -1)
 		if val[0] != "" {
-			fmt.Fprintf(fd, `%s(%s)`, val[0], val[1])
+			fmt.Fprintf(fd, `%s(%s)`, val[0], format)
 		} else {
-			fmt.Fprintf(fd, "%s", val[1])
+			fmt.Fprintf(fd, "%s", format)
 		}
 		fmt.Fprintln(fd, `\n",n)`)
 	}

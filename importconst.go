@@ -140,6 +140,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "  d(NAME) ... const NAME=%d")
 		fmt.Fprintln(os.Stderr, "  s(NAME) ... const NAME=\"%s\"")
 		fmt.Fprintln(os.Stderr, "  u32x(NAME) ... const NAME=uint32(%08X)")
+		fmt.Fprintln(os.Stderr, "  up(NAME) ... const NAME=uintptr(%d)")
 		fmt.Fprintln(os.Stderr, "creates these files.")
 		fmt.Fprintln(os.Stderr, "   -> ./makeconst.c (temporary)")
 		fmt.Fprintln(os.Stderr, "   -> ./a.exe (temporary)")

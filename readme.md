@@ -9,12 +9,10 @@ It requres `gcc.exe`.
     Usage: go-importconst.exe PACKAGENAME mark(constant)...
       -d ... do not remove temporary file
       -c ... clean output-files
-      <header.h> "header.h" ... append headers
-      d(NAME) ... const NAME=%d
-      s(NAME) ... const NAME="%s"
-      u32x(NAME) ... const NAME=uint32(%08X)
-      up(NAME) ... const NAME=uintptr(%d)
-      NAME:TYPE:FORMAT ... const NAME=TYPE(FORMAT)
+      <header.h> \"header.h\" ... append headers
+      NAME             -> const NAME=%d
+      NAME:TYPE        -> const NAME=TYPE(%d)
+      NAME:TYPE:FORMAT -> const NAME=TYPE(FORMAT)
     creates these files.
        -> ./makeconst.c (temporary)
        -> ./a.exe (temporary)
@@ -28,14 +26,14 @@ Example-1
 
     go-importconst ^
         conio ^
-        d(CTRL_CLOSE_EVENT) ^
-        d(CTRL_LOGOFF_EVENT) ^
-        d(CTRL_SHUTDOWN_EVENT) ^
-        d(CTRL_C_EVENT) ^
-        d(ENABLE_ECHO_INPUT) ^
-        d(ENABLE_PROCESSED_INPUT) ^
-        u32x(STD_INPUT_HANDLE) ^
-        u32x(STD_OUTPUT_HANDLE)
+        CTRL_CLOSE_EVENT ^
+        CTRL_LOGOFF_EVENT ^
+        CTRL_SHUTDOWN_EVENT ^
+        CTRL_C_EVENT ^
+        ENABLE_ECHO_INPUT ^
+        ENABLE_PROCESSED_INPUT ^
+        STD_INPUT_HANDLE:uint32:0x%%X ^
+        STD_OUTPUT_HANDLE:uint32:0x%%X
 
 ### Output (`const.go`)
 
@@ -55,7 +53,7 @@ Example-2
 
 ### Commandline
 
-    go-importconst -d "stddef.h" "<stdlib.h>" main d(NULL)
+    go-importconst -d "stddef.h" "<stdlib.h>" main NULL
 
 ### Temporary-file (`makeconst.c`)
 
@@ -67,13 +65,16 @@ Example-2
     #define d(n) printf("const " #n "=%d\n",n)
     #define s(n) printf("const " #n "=\"%s\"\n",n)
     #define u32x(n) printf("const " #n "=uint32(0x%08X)\n",n)
+    #define up(n) printf("const " #n "=uintptr(%d)\n",n)
+    #define MAKECONST_NULL(n) printf("const " #n "=%d\n",n)
 
     int main()
     {
         printf("package main\n\n");
-        d(NULL);
+        MAKECONST_NULL(NULL);
         return 0;
     }
+
 
 ### Output (`const.go`)
 

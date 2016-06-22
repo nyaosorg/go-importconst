@@ -159,15 +159,13 @@ func main() {
 		return
 	}
 	if len(names) <= 0 {
-		fmt.Fprintf(os.Stderr, "Usage: %s PACKAGENAME mark(constant)...\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s PACKAGE NAME:TYPE:FORMAT...\n", os.Args[0])
 		fmt.Fprintln(os.Stderr, "  -d ... do not remove temporary file")
 		fmt.Fprintln(os.Stderr, "  -c ... clean output-files")
-		fmt.Fprintln(os.Stderr, "  <header.h> \"header.h\" ... append headers")
-		fmt.Fprintln(os.Stderr, "  d(NAME) ... const NAME=%d")
-		fmt.Fprintln(os.Stderr, "  s(NAME) ... const NAME=\"%s\"")
-		fmt.Fprintln(os.Stderr, "  u32x(NAME) ... const NAME=uint32(%08X)")
-		fmt.Fprintln(os.Stderr, "  up(NAME) ... const NAME=uintptr(%d)")
-		fmt.Fprintln(os.Stderr, "  NAME:TYPE:FORMAT ... const NAME=TYPE(FORMAT)")
+		fmt.Fprintln(os.Stderr, `  <header.h> \"header.h\" ... append headers`)
+		fmt.Fprintln(os.Stderr, "  NAME             -> const NAME=%d")
+		fmt.Fprintln(os.Stderr, "  NAME:TYPE        -> const NAME=TYPE(%d)")
+		fmt.Fprintln(os.Stderr, "  NAME:TYPE:FORMAT -> const NAME=TYPE(FORMAT)")
 		fmt.Fprintln(os.Stderr, "creates these files.")
 		fmt.Fprintln(os.Stderr, "   -> ./makeconst.c (temporary)")
 		fmt.Fprintln(os.Stderr, "   -> ./a.exe (temporary)")

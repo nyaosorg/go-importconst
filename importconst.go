@@ -58,6 +58,7 @@ func make_csource(csrcname string) {
 	fmt.Fprintln(fd, `#define d(n) printf("const " #n "=%d\n",n)`)
 	fmt.Fprintln(fd, `#define s(n) printf("const " #n "=\"%s\"\n",n)`)
 	fmt.Fprintln(fd, `#define u32x(n) printf("const " #n "=uint32(0x%08X)\n",n)`)
+	fmt.Fprintln(fd, `#define up(n) printf("const " #n "=uintptr(%d)\n",n)`)
 	fmt.Fprintln(fd, ``)
 	fmt.Fprintln(fd, `int main()`)
 	fmt.Fprintln(fd, `{`)

@@ -35,12 +35,14 @@ func parse() bool {
 			stdheaders = append(stdheaders, arg1)
 		} else if p := strings.Split(arg1, ":"); len(p) == 3 {
 			macros[p[0]] = [2]string{p[1], p[2]}
+			names = append(names, p[0])
 		} else if packagename == "" {
 			packagename = arg1
 		} else if strings.ContainsRune(arg1, '(') {
 			names = append(names, arg1)
 		} else {
 			macros[arg1] = [2]string{"", "%d"}
+			names = append(names, arg1) // for keep argment order.
 		}
 	}
 	return true
@@ -82,10 +84,11 @@ func make_csource(csrcname string) {
 	fmt.Fprintln(fd, `    printf("package `+packagename+`\n\n");`)
 
 	for _, name1 := range names {
-		fmt.Fprintf(fd, "    %s;\n", name1)
-	}
-	for name1, _ := range macros {
-		fmt.Fprintf(fd, "    MAKECONST_%s(%s);\n", name1, name1)
+		if _, ok := macros[name1]; ok {
+			fmt.Fprintf(fd, "    MAKECONST_%s(%s);\n", name1, name1)
+		} else {
+			fmt.Fprintf(fd, "    %s;\n", name1)
+		}
 	}
 	fmt.Fprintln(fd, "    return 0;\n}\n")
 }

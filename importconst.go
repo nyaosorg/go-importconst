@@ -33,7 +33,10 @@ func parse() bool {
 			headers = append(headers, arg1)
 		} else if strings.HasSuffix(arg1, ".h>") {
 			stdheaders = append(stdheaders, arg1)
-		} else if p := strings.Split(arg1, ":"); len(p) == 3 {
+		} else if p := strings.Split(arg1, ":"); len(p) >= 2 {
+			if len(p) == 2 {
+				p = append(p, "%d")
+			}
 			macros[p[0]] = [2]string{p[1], p[2]}
 			names = append(names, p[0])
 		} else if packagename == "" {

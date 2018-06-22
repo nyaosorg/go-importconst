@@ -7,10 +7,17 @@ import (
 	"strings"
 )
 
-const CSOURCE = "makeconst.c"
-const AEXE = "a.exe"
+// CSource is the filename of the temporary file *.c
+const CSource = "makeconst.c"
+
+// AExe is the filename of the temporary file *.exe
+const AExe = "a.exe"
+
+// CC is the Compiler command
 const CC = "gcc.exe"
-const GOSOURCE = "const.go"
+
+// GoSource is the filename of the temporary file *.go
+const GoSource = "const.go"
 
 var debug = false
 
@@ -26,8 +33,8 @@ func parse() bool {
 		if arg1 == "-d" {
 			debug = true
 		} else if arg1 == "-c" {
-			os.Remove(CSOURCE)
-			os.Remove(GOSOURCE)
+			os.Remove(CSource)
+			os.Remove(GoSource)
 			return false
 		} else if strings.HasSuffix(arg1, ".h") {
 			headers = append(headers, arg1)
@@ -51,7 +58,7 @@ func parse() bool {
 	return true
 }
 
-func make_csource(csrcname string) {
+func makeCSource(csrcname string) {
 	fd, err := os.Create(csrcname)
 	if err != nil {
 		fmt.Fprintf(fd, "%s: can not create makeconst.c\n", os.Args[0])
@@ -100,7 +107,7 @@ func compile() error {
 	var gcc exec.Cmd
 	gcc.Args = []string{
 		CC,
-		CSOURCE,
+		CSource,
 	}
 	gcc.Path = gcc.Args[0]
 	gcc.Stdout = os.Stdout
@@ -111,15 +118,15 @@ func compile() error {
 func aexe() error {
 	var aexe exec.Cmd
 	aexe.Args = []string{
-		AEXE,
+		AExe,
 	}
 	aexe.Path = aexe.Args[0]
-	const_c, err := os.Create(GOSOURCE)
+	constC, err := os.Create(GoSource)
 	if err != nil {
 		return err
 	}
-	defer const_c.Close()
-	aexe.Stdout = const_c
+	defer constC.Close()
+	aexe.Stdout = constC
 	aexe.Stderr = os.Stderr
 	return aexe.Run()
 }
@@ -129,7 +136,7 @@ func gofmt() error {
 	gofmt.Args = []string{
 		"go",
 		"fmt",
-		GOSOURCE,
+		GoSource,
 	}
 	gofmt.Path = gofmt.Args[0]
 	gofmt.Stdout = os.Stdout
@@ -146,7 +153,7 @@ func main1() error {
 	if err != nil {
 		return err
 	}
-	os.Remove(AEXE)
+	os.Remove(AExe)
 	err = gofmt()
 	if err != nil {
 		return err
@@ -173,9 +180,9 @@ func main() {
 		fmt.Fprintln(os.Stderr, "gcc and go-fmt are required.")
 		return
 	}
-	make_csource(CSOURCE)
+	makeCSource(CSource)
 	if !debug {
-		defer os.Remove(CSOURCE)
+		defer os.Remove(CSource)
 	}
 
 	if err := main1(); err != nil {

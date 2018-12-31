@@ -24,6 +24,7 @@ Example
 ---------
 
 sample.h
+
     #ifndef HOGE_H
     #  define AHAHA "ahaha"
     #  define IHIHI 12345
@@ -41,6 +42,7 @@ Output(`const.go`):
     const UFUFU = 3.141590
 
 A temporary file(`makeconst.c`):
+
     #include <cstdio>
     #include <windows.h>
     #include "sample.h"

@@ -4,80 +4,68 @@ go-importconst
 Import constants defined in C-header-files for Go ,
 and makes `const.go` without `cgo`.
 
-It requres `gcc.exe`.
+It requires `gcc`.
 
-    Usage: go-importconst.exe PACKAGENAME mark(constant)...
-      -d ... do not remove temporary file
-      -c ... clean output-files
-      <header.h> \"header.h\" ... append headers
-      NAME             -> const NAME=%d
-      NAME:TYPE        -> const NAME=TYPE(%d)
-      NAME:TYPE:FORMAT -> const NAME=TYPE(FORMAT)
+    Usage:
+        go-importconst {OPTIONS} {HEADERFILE(S)...} {CONSTANTS}...
+            OR
+        go run importconst.go {OPTIONS} {HEADERFILE(S)...} {CONSTANTS}...
+
+    options:
+      -d ... For debug, do not remove temporary file
+      -p PACKAGE ... specify packagename(default: main)
     creates these files.
        -> ./makeconst.c (temporary)
        -> ./a.exe (temporary)
        -> ./const.go
-    gcc and go-fmt are required.
+    gcc and go are required.
 
-Example-1
+Example
 ---------
 
-### Commandline
+sample.h
+    #ifndef HOGE_H
+    #  define AHAHA "ahaha"
+    #  define IHIHI 12345
+    #  define UFUFU 3.14159
+    #endif
 
-    go-importconst ^
-        conio ^
-        CTRL_CLOSE_EVENT ^
-        CTRL_LOGOFF_EVENT ^
-        CTRL_SHUTDOWN_EVENT ^
-        CTRL_C_EVENT ^
-        ENABLE_ECHO_INPUT ^
-        ENABLE_PROCESSED_INPUT ^
-        STD_INPUT_HANDLE:uint32:0x%%X ^
-        STD_OUTPUT_HANDLE:uint32:0x%%X
+Commandline:
+    go-importconst sample.h AHAHA IHIHI UFUFU
 
-### Output (`const.go`)
+Output(`const.go`):
+    package main
 
-    package conio
+    const AHAHA = "ahaha"
+    const IHIHI = 12345
+    const UFUFU = 3.141590
 
-    const CTRL_CLOSE_EVENT = 2
-    const CTRL_LOGOFF_EVENT = 5
-    const CTRL_SHUTDOWN_EVENT = 6
-    const CTRL_C_EVENT = 0
-    const ENABLE_ECHO_INPUT = 4
-    const ENABLE_PROCESSED_INPUT = 1
-    const STD_INPUT_HANDLE = uint32(0xFFFFFFF6)
-    const STD_OUTPUT_HANDLE = uint32(0xFFFFFFF5)
-
-Example-2
----------
-
-### Commandline
-
-    go-importconst -d "stddef.h" "<stdlib.h>" main NULL
-
-### Temporary-file (`makeconst.c`)
-
-    #include <stdio.h>
+A temporary file(`makeconst.c`):
+    #include <cstdio>
     #include <windows.h>
-    #include <stdlib.h>
-    #include "stddef.h"
+    #include "sample.h"
 
-    #define d(n) printf("const " #n "=%d\n",n)
-    #define s(n) printf("const " #n "=\"%s\"\n",n)
-    #define u32x(n) printf("const " #n "=uint32(0x%08X)\n",n)
-    #define up(n) printf("const " #n "=uintptr(%d)\n",n)
-    #define MAKECONST_NULL(n) printf("const " #n "=%d\n",n)
+    void p(const char *name,const char *s){
+        printf("const %s=\"%s\"\n",name,s);
+    }
+    void p(const char *name,int n){
+        printf("const %s=%d\n",name,n);
+    }
+    void p(const char *name,long n){
+        printf("const %s=%ld\n",name,n);
+    }
+    void p(const char *name,unsigned long n){
+        printf("const %s=%ld\n",name,n);
+    }
+    void p(const char *name,double n){
+        printf("const %s=%lf\n",name,n);
+    }
 
     int main()
     {
         printf("package main\n\n");
-        MAKECONST_NULL(NULL);
+        p("AHAHA",AHAHA);
+        p("IHIHI",IHIHI);
+        p("UFUFU",UFUFU);
         return 0;
     }
-
-
-### Output (`const.go`)
-
-    package main
-
-    const NULL = 0

@@ -58,7 +58,7 @@ func parse() bool {
 	return true
 }
 
-func makeCSource(csrcname string) {
+func makeCSource(csrcname string, stdheaders []string, header []string) {
 	fd, err := os.Create(csrcname)
 	if err != nil {
 		fmt.Fprintf(fd, "%s: can not create makeconst.c\n", os.Args[0])
@@ -75,8 +75,6 @@ func makeCSource(csrcname string) {
 	fmt.Fprintln(fd, ``)
 	fmt.Fprintln(fd, `#define d(n) printf("const " #n "=%d\n",n)`)
 	fmt.Fprintln(fd, `#define s(n) printf("const " #n "=\"%s\"\n",n)`)
-	fmt.Fprintln(fd, `#define u32x(n) printf("const " #n "=uint32(0x%08X)\n",n)`)
-	fmt.Fprintln(fd, `#define up(n) printf("const " #n "=uintptr(%d)\n",n)`)
 	for key, val := range macros {
 		fmt.Fprintf(fd, `#define MAKECONST_%s(n) printf("const " #n "=`, key)
 
@@ -180,7 +178,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "gcc and go-fmt are required.")
 		return
 	}
-	makeCSource(CSource)
+	makeCSource(CSource, stdheaders, headers)
 	if !debug {
 		defer os.Remove(CSource)
 	}

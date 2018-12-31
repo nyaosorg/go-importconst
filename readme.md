@@ -32,7 +32,8 @@ sample.h
     #endif
 
 Commandline:
-    go-importconst sample.h AHAHA IHIHI UFUFU
+
+    $ go-importconst sample.h AHAHA IHIHI UFUFU
 
 Output(`const.go`):
     package main

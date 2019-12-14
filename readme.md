@@ -29,7 +29,7 @@ package dos
 //	S_OK
 ```
 
-`go generate` creates the go-source like below
+`go generate` creates the go-source (`zconst.go`) like below
 
 ```zconst.go
 package dos
@@ -104,3 +104,14 @@ int main()
     return 0;
 }
 ```
+
+Author
+------
+
+[@zetamatta](http://github.com/zetamatta/)
+
+
+License
+-------
+
+You can use, copy and modify under the MIT License.

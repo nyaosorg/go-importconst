@@ -175,9 +175,6 @@ func main1() error {
 		return err
 	}
 	headers := []string{"<cstdio>"}
-	if runtime.GOOS == "windows" {
-		headers = append(headers, "<windows.h>")
-	}
 	vars := make([]string, 0)
 	for _, s := range goParams {
 		if len(s) > 0 && s[0] == '<' {

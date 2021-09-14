@@ -9,7 +9,7 @@ from `const.go` :
 ```go
 package dos
 
-//go:generate go run github.com/zetamatta/go-importconst
+//go:generate go run github.com/nyaosorg/go-importconst
 //	<windows.h>
 //	RESOURCE_CONNECTED
 //	RESOURCE_CONTEXT

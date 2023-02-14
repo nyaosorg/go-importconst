@@ -12,16 +12,14 @@ import (
 	"strings"
 )
 
-// CSource is the filename of the temporary file *.c
-const CSource = "zconst.cpp"
+var (
+	flagCSrc  = flag.String("csrc", "zconst.cpp", "c-source filename used temporally")
+	flagCc    = flag.String("cc", "gcc", "c compiler command")
+	flagGoSrc = flag.String("o", "zconst.go", "go-source-filename to output constants")
+	flagClean = flag.Bool("c", false, "clean output")
+	flagDebug = flag.Bool("d", false, "debug flag")
+)
 
-// CC is the Compiler command
-const CC = "gcc"
-
-var GoSource = flag.String("o", "zconst.go", "go-source-filename to output constants")
-
-var clean = flag.Bool("c", false, "clean output")
-var debug = flag.Bool("d", false, "debug flag")
 var packageName = os.Getenv("GOPACKAGE")
 
 func makeCSource(csrcname string, headers []string, vars []string) {
@@ -65,19 +63,19 @@ int main()
 }
 
 func compile() error {
-	var gcc exec.Cmd
-	gcc.Args = []string{
-		CC,
-		CSource,
+	var cc exec.Cmd
+	cc.Args = []string{
+		*flagCc,
+		*flagCSrc,
 	}
-	fn, err := exec.LookPath(CC)
+	fn, err := exec.LookPath(*flagCc)
 	if err != nil {
 		return err
 	}
-	gcc.Path = fn
-	gcc.Stdout = os.Stdout
-	gcc.Stderr = os.Stderr
-	return gcc.Run()
+	cc.Path = fn
+	cc.Stdout = os.Stdout
+	cc.Stderr = os.Stderr
+	return cc.Run()
 }
 
 func nameOfExecutable() string {
@@ -89,7 +87,7 @@ func nameOfExecutable() string {
 }
 
 func aexe() (string, error) {
-	constC, err := os.Create(*GoSource)
+	constC, err := os.Create(*flagGoSrc)
 	if err != nil {
 		return "", err
 	}
@@ -110,7 +108,7 @@ func gofmt() error {
 	gofmt.Args = []string{
 		"go",
 		"fmt",
-		*GoSource,
+		*flagGoSrc,
 	}
 	fn, err := exec.LookPath("go")
 	if err != nil {
@@ -161,13 +159,16 @@ func readGoGenerateParameter() ([]string, error) {
 	return tokens, nil
 }
 
-func main1() error {
-	flag.Parse()
+func remove(fn string) {
+	fmt.Fprintln(os.Stderr, "rm", fn)
+	os.Remove(fn)
+}
 
-	if *clean {
-		os.Remove(CSource)
-		os.Remove(nameOfExecutable())
-		os.Remove(*GoSource)
+func main1() error {
+	if *flagClean {
+		remove(*flagCSrc)
+		remove(nameOfExecutable())
+		remove(*flagGoSrc)
 		return nil
 	}
 	goParams, err := readGoGenerateParameter()
@@ -186,10 +187,10 @@ func main1() error {
 		}
 	}
 
-	makeCSource(CSource, headers, vars)
+	makeCSource(*flagCSrc, headers, vars)
 
-	if !*debug {
-		defer os.Remove(CSource)
+	if !*flagDebug {
+		defer remove(*flagCSrc)
 	}
 
 	err = compile()
@@ -200,7 +201,7 @@ func main1() error {
 	if err != nil {
 		return err
 	}
-	os.Remove(fname)
+	remove(fname)
 	err = gofmt()
 	if err != nil {
 		return err
@@ -209,6 +210,7 @@ func main1() error {
 }
 
 func main() {
+	flag.Parse()
 	if err := main1(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return

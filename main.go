@@ -18,6 +18,7 @@ var (
 	flagGoSrc = flag.String("o", "zconst.go", "go-source-filename to output constants")
 	flagClean = flag.Bool("c", false, "clean output")
 	flagDebug = flag.Bool("d", false, "debug flag")
+	flagNofmt = flag.Bool("nofmt", false, "do not execute go fmt (for debug)")
 )
 
 var packageName = os.Getenv("GOPACKAGE")
@@ -104,6 +105,9 @@ func aexe() (string, error) {
 }
 
 func gofmt() error {
+	if *flagNofmt {
+		return nil
+	}
 	var gofmt exec.Cmd
 	gofmt.Args = []string{
 		"go",

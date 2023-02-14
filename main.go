@@ -76,6 +76,7 @@ func compile() error {
 	cc.Path = fn
 	cc.Stdout = os.Stdout
 	cc.Stderr = os.Stderr
+	fmt.Fprintln(os.Stderr, cc.Path, *flagCSrc)
 	return cc.Run()
 }
 
@@ -101,6 +102,7 @@ func aexe() (string, error) {
 		Stdout: constC,
 		Stderr: os.Stderr,
 	}
+	fmt.Fprintln(os.Stderr, fname, ">", *flagGoSrc)
 	return fname, aexe.Run()
 }
 
@@ -121,6 +123,7 @@ func gofmt() error {
 	gofmt.Path = fn
 	gofmt.Stdout = os.Stdout
 	gofmt.Stderr = os.Stderr
+	fmt.Fprintln(os.Stderr, fn, "fmt", *flagGoSrc)
 	return gofmt.Run()
 }
 

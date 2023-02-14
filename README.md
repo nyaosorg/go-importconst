@@ -105,6 +105,26 @@ int main()
 }
 ```
 
+Install
+-------
+
+If you want to use with `go:generate go-importconst` instead of `go:generate go run github.com/nyaosorg/go-importconst`, you can install as below
+
+Download the binary package from [Releases](https://github.com/nyaosorg/go-importconst/releases) and extract the executable.
+
+### for scoop-installer
+
+```
+scoop install https://raw.githubusercontent.com/nyaosorg/go-importconst/master/go-importconst.json
+```
+
+or
+
+```
+scoop bucket add nyaosorg https://github.com/nyaosorg/scoop-bucket
+scoop install go-importconst
+```
+
 Author
 ------
 

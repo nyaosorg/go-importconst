@@ -81,9 +81,9 @@ func compile() error {
 
 func nameOfExecutable() string {
 	if runtime.GOOS == "windows" {
-		return "a.exe"
+		return ".\\a.exe"
 	} else {
-		return "a.out"
+		return "./a.out"
 	}
 }
 

@@ -26,3 +26,6 @@ package:
 
 manifest:
 	make-scoop-manifest *-windows-*.zip > $(NAME).json
+
+test:
+	$(SET) "GOFILE=const.go" && $(SET) "GOLINE=3" && $(SET) "GOPACKAGE=dos" && cd example && "../go-importconst" -d

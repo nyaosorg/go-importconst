@@ -1,8 +1,11 @@
 go-importconst
 ==============
 
-Import constants defined in C-header-files for Go without `cgo`.
-It requires `gcc`.
+When you wanted to refer to a C constant in Go-sources, you had to use "cgo" or copy it by hand. As a result, you have to require a C compiler as a build requirement.
+
+With go-importconst , the C compiler is only needed when using `go generate`, not when `go build`.
+
+The go-importconst is called by `go generate` to generate, compile and execute C source files that generate "Go source files that define the desired constants".
 
 from `const.go` :
 

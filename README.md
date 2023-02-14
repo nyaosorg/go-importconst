@@ -108,7 +108,7 @@ int main()
 Author
 ------
 
-[@zetamatta](http://github.com/zetamatta/)
+[@hymkor](http://github.com/hymkor/)
 
 
 License

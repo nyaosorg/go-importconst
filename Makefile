@@ -38,3 +38,6 @@ test-uppercamel:
 
 test-underscore:
 	$(SET) "GOFILE=const.go" && $(SET) "GOLINE=3" && $(SET) "GOPACKAGE=dos" && cd example && "../go-importconst" -d -prefix _
+
+test2:
+	$(SET) "GOFILE=const.go" && $(SET) "GOLINE=3" && $(SET) "GOPACKAGE=dos" && cd example2 && "../go-importconst" -d

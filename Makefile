@@ -29,3 +29,12 @@ manifest:
 
 test:
 	$(SET) "GOFILE=const.go" && $(SET) "GOLINE=3" && $(SET) "GOPACKAGE=dos" && cd example && "../go-importconst" -d
+
+test-lowercamel:
+	$(SET) "GOFILE=const.go" && $(SET) "GOLINE=3" && $(SET) "GOPACKAGE=dos" && cd example && "../go-importconst" -d -lowercamel
+
+test-uppercamel:
+	$(SET) "GOFILE=const.go" && $(SET) "GOLINE=3" && $(SET) "GOPACKAGE=dos" && cd example && "../go-importconst" -d -uppercamel
+
+test-underscore:
+	$(SET) "GOFILE=const.go" && $(SET) "GOLINE=3" && $(SET) "GOPACKAGE=dos" && cd example && "../go-importconst" -d -prefix _

@@ -34,6 +34,18 @@ package dos
 
 `go generate` creates the go-source (`zconst.go`) like below
 
+```
+$ go get github.com/nyaosorg/go-importconst
+go: downloading github.com/nyaosorg/go-importconst v0.2.0
+go: added github.com/nyaosorg/go-importconst v0.2.0
+$ go generate
+C:\Users\hymkor\scoop\apps\gcc\current\bin\gcc.exe zconst.cpp
+.\a.exe zconst.go
+rm .\a.exe
+C:\go\bin\go.exe fmt zconst.go
+rm zconst.cpp
+```
+
 ```zconst.go
 package dos
 

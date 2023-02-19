@@ -144,6 +144,28 @@ scoop bucket add nyaosorg https://github.com/nyaosorg/scoop-bucket
 scoop install go-importconst
 ```
 
+Options
+-------
+
+* -c
+    * clean output
+* -cc string
+    * c compiler command (default "gcc")
+* -csrc string
+    * c-source filename used temporally (default "zconst.cpp")
+* -d
+    * debug flag
+* -lowercamel
+    * `AAA_BBB_CCC` to `aaaBbbCcc`
+* -nofmt
+    * do not execute go fmt (for debug)
+* -o string
+    * go-source-filename to output constants (default "zconst.go")
+* -prefix string
+    * append `string` to symbol as prefix
+* -uppercamel
+    * `AAA_BBB_CCC` to `AaaBbbCcc`
+
 Author
 ------
 

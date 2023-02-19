@@ -69,7 +69,7 @@ void p(FILE *w,const char *name,long n){
 	fprintf(w,"const %s = %ld\n",name,n);
 }
 void p(FILE *w,const char *name,unsigned long n){
-	fprintf(w,"const %s = %ld\n",name,n);
+	fprintf(w,"const %s = %lu\n",name,n);
 }
 void p(FILE *w,const char *name,double n){
 	fprintf(w,"const %s = %lf\n",name,n);

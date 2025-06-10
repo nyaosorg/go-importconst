@@ -35,15 +35,19 @@ package dos
 Running `go generate` produces a Go source file (`zconst.go`) like the one below:
 
 ```
-$ go get github.com/nyaosorg/go-importconst
-go: downloading github.com/nyaosorg/go-importconst v0.2.0
-go: added github.com/nyaosorg/go-importconst v0.2.0
-$ go generate
-C:\Users\hymkor\scoop\apps\gcc\current\bin\gcc.exe zconst.cpp
+C:> cd example
+
+C:> go generate -v -x
+const.go
+go run github.com/nyaosorg/go-importconst
+C:\Users\hymkor\scoop\apps\tdm-gcc\current\bin\gcc.exe zconst.cpp
 .\a.exe zconst.go
 rm .\a.exe
-C:\go\bin\go.exe fmt zconst.go
+C:\Users\hymkor\scoop\apps\go\current\bin\go.exe fmt zconst.go
 rm zconst.cpp
+zconst.go
+
+C:>
 ```
 
 ```zconst.go

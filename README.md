@@ -1,13 +1,13 @@
 go-importconst
 ==============
 
-When you wanted to refer to a C constant in Go-sources, you had to use "cgo" or copy it by hand. As a result, you have to require a C compiler as a build requirement.
+When you want to refer to a constant defined in a C header from Go code, you typically have to use `cgo` or manually copy the value. This introduces a C compiler as a build-time dependency.
 
-With go-importconst , the C compiler is only needed when using `go generate`, not when `go build`.
+With **go-importconst**, the C compiler is required **only at `go generate` time**, not at `go build` time. This enables projects to avoid requiring a C compiler for regular builds.
 
-The go-importconst is called by `go generate` to generate, compile and execute C source files that generate "Go source files that define the desired constants".
+**go-importconst** is invoked by `go generate` to generate, compile, and execute a temporary C++ source file. This C++ program emits Go source code that defines the requested constants.
 
-from `const.go` :
+From `const.go`:
 
 ```go
 package dos
@@ -32,7 +32,7 @@ package dos
 //	S_OK
 ```
 
-`go generate` creates the go-source (`zconst.go`) like below
+Running `go generate` produces a Go source file (`zconst.go`) like the one below:
 
 ```
 $ go get github.com/nyaosorg/go-importconst
@@ -71,10 +71,9 @@ const S_OK = 0
 Mechanism
 ---------
 
-1. Creates the C++ source file like below
-2. Compile it with gcc
-3. Run the executable and redirect stdout to `zconst.go`
-
+1. A temporary C++ source file is generated.
+2. It is compiled using a C compiler such as `gcc`.
+3. The resulting executable is run to write the Go source (`zconst.go`) to standard output.
 
 ```zconst.cpp
 #include <cstdio>
@@ -127,17 +126,29 @@ int main(int argc,char **argv)
 Install
 -------
 
-If you want to use with `go:generate go-importconst` instead of `go:generate go run github.com/nyaosorg/go-importconst`, you can install as below
+If you want to use:
 
-Download the binary package from [Releases](https://github.com/nyaosorg/go-importconst/releases) and extract the executable.
+```go
+//go:generate go-importconst ...
+```
 
-### for scoop-installer
+instead of:
+
+```go
+//go:generate go run github.com/nyaosorg/go-importconst ...
+```
+
+you can install the binary from the releases page.
+
+Download the binary from [Releases](https://github.com/nyaosorg/go-importconst/releases) and place it in your `PATH`.
+
+### For scoop users:
 
 ```
 scoop install https://raw.githubusercontent.com/nyaosorg/go-importconst/master/go-importconst.json
 ```
 
-or
+or:
 
 ```
 scoop bucket add nyaosorg https://github.com/nyaosorg/scoop-bucket
@@ -147,32 +158,39 @@ scoop install go-importconst
 Options
 -------
 
-* -c
-    * clean output
-* -cc string
-    * c compiler command (default "gcc")
-* -csrc string
-    * c-source filename used temporally (default "zconst.cpp")
-* -d
-    * debug flag
-* -lowercamel
-    * `AAA_BBB_CCC` to `aaaBbbCcc`
-* -nofmt
-    * do not execute go fmt (for debug)
-* -o string
-    * go-source-filename to output constants (default "zconst.go")
-* -prefix string
-    * append `string` to symbol as prefix
-* -uppercamel
-    * `AAA_BBB_CCC` to `AaaBbbCcc`
+* `-c`
+  Clean output (removes temporary files)
+
+* `-cc string`
+  C compiler command (default `"gcc"`)
+
+* `-csrc string`
+  Temporary C source filename (default `"zconst.cpp"`)
+
+* `-d`
+  Enable debug output
+
+* `-lowercamel`
+  Convert `AAA_BBB_CCC` to `aaaBbbCcc`
+
+* `-nofmt`
+  Do not run `go fmt` (for debugging)
+
+* `-o string`
+  Output filename for generated Go source (default `"zconst.go"`)
+
+* `-prefix string`
+  Add this string as a prefix to constant names
+
+* `-uppercamel`
+  Convert `AAA_BBB_CCC` to `AaaBbbCcc`
 
 Author
 ------
 
-[@hymkor](http://github.com/hymkor/)
-
+[hymkor (HAYAMA Kaoru)](https://github.com/hymkor)
 
 License
 -------
 
-You can use, copy and modify under the MIT License.
+You may use, copy, and modify this software under the terms of the MIT License.

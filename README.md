@@ -1,11 +1,22 @@
 go-importconst
 ==============
 
-When you want to refer to a constant defined in a C header from Go code, you typically have to use `cgo` or manually copy the value. This introduces a C compiler as a build-time dependency.
+When you want to use constants defined in a C header from Go code, you usually have to rely on `cgo` or manually copy the values. Both approaches introduce a C compiler as a build-time dependency.
 
-With **go-importconst**, the C compiler is required **only at `go generate` time**, not at `go build` time. This enables projects to avoid requiring a C compiler for regular builds.
+**go-importconst** avoids this by requiring a C compiler **only at `go generate` time**, not at `go build` time. This allows Go projects to reference C/C++ constants without making a C compiler mandatory for regular builds.
 
-**go-importconst** is invoked by `go generate` to generate, compile, and execute a temporary C++ source file. This C++ program emits Go source code that defines the requested constants.
+How it works
+------------
+
+**go-importconst** is intended to be invoked via `go generate`.
+
+It generates a temporary C++ source file, compiles it, and runs the resulting executable.  
+That executable prints Go source code defining the requested constants, which is then saved as a `.go` file.
+
+Example
+-------
+
+Below is an example `const.go` file that uses `go generate` to import constants from a C header:
 
 **const.go** :
 
@@ -34,7 +45,7 @@ package dos
 
 Running `go generate` produces a Go source file (`zconst.go`) like the one below:
 
-**go generate -C example -v -x`**
+**go generate -C example -v -x**
 
 ```output: go generate -C example -v -x
 const.go
@@ -46,6 +57,8 @@ C:\Users\hymko\scoop\apps\go\current\bin\go.exe fmt zconst.go
 rm zconst.cpp
 zconst.go
 ```
+
+Running `go generate` produces a Go source file (`zconst.go`) similar to the following:
 
 **example/zconst.go**
 
@@ -74,9 +87,9 @@ const S_OK = 0
 Mechanism
 ---------
 
-1. A temporary C++ source file is generated.
-2. It is compiled using a C compiler such as `gcc`.
-3. The resulting executable is run to write the Go source (`zconst.go`) to standard output.
+1. A temporary C++ source file is generated based on the requested constants.
+2. The source file is compiled using a C/C++ compiler (for example, `gcc`).
+3. The resulting executable is run, and it writes the generated Go source (`zconst.go`) to standard output.
 
 **zconst.cpp**
 
@@ -131,7 +144,7 @@ int main(int argc,char **argv)
 Install
 -------
 
-If you want to use:
+If you prefer to write:
 
 ```go
 //go:generate go-importconst ...
@@ -143,7 +156,7 @@ instead of:
 //go:generate go run github.com/nyaosorg/go-importconst@latest ...
 ```
 
-you can install the binary from the releases page.
+you can install the prebuilt binary from the releases page.
 
 Download the binary from [Releases](https://github.com/nyaosorg/go-importconst/releases) and place it in your `PATH`.
 

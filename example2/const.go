@@ -1,6 +1,6 @@
 package limits
 
-//go:generate github.com/nyaosorg/go-importconst
+//go:generate go run github.com/nyaosorg/go-importconst@latest
 //	<limits.h>
 //	CHAR_BIT
 //	CHAR_MAX

@@ -1,6 +1,6 @@
 package dos
 
-//go:generate go run github.com/nyaosorg/go-importconst
+//go:generate go run github.com/nyaosorg/go-importconst@latest
 //	<windows.h>
 //	RESOURCE_CONNECTED
 //	RESOURCE_CONTEXT
